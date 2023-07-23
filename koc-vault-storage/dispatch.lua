@@ -46,9 +46,6 @@ function dispense(inventory, key, amount)
 end
 
 function requestUserInput(vaults)
-    term.clear()
-    term.setCursorPos(1, 1)
-
     local inventory = common.getInventory(vaults)
 
     local keys = {}
@@ -96,9 +93,6 @@ function requestUserInput(vaults)
 end
 
 function main()
-    term.clear()
-    term.setCursorPos(1, 1)
-
     Chest = peripheral.find("minecraft:chest")
     local vaults = { peripheral.find("create:item_vault") }
 

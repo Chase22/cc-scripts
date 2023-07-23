@@ -7,12 +7,13 @@ common.displayNames = {}
 function common.getInventory(vaults)
     local inventoryTable = {}
 
+    local vaultNames = {}
+
     for _, vault in pairs(vaults) do
         local name = peripheral.getName(vault)
+        vaultNames[name] = vault
 
         for slot, item in pairs(vault.list()) do
-            
-            local details = vault.getItemDetail(slot)
             if (details ~= nil) then 
                 common.displayNames[item.name] = details.displayName 
             end
@@ -22,6 +23,11 @@ function common.getInventory(vaults)
     
             inventoryTable[item.name] = list
         end
+    end
+
+    for key, entry in pairs(inventoryTable) do
+        local details = vaultNames[entry[1].vault].getItemDetail(entry[1].slot)
+        common.displayNames[key] = details.displayName
     end
     
     return inventoryTable
