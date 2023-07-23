@@ -96,3 +96,7 @@ term.clear()
 term.setCursorPos(1,1)
  
 dispense(inventory, key, amount)
+
+print("Press any key to dispense next item")
+os.pullEvent("key")
+shell.run("dispatch")

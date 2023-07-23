@@ -30,7 +30,7 @@ local choice = read(nil, nil, function(text)
     return completion.choice(text, {"dispatcher", "monitor"})
 end)
 if choice == "dispatcher" then
-    startup("dispath") 
+    startup("dispatch") 
     os.reboot()
 elseif choice == "monitor" then
     startup("monitor")
