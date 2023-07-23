@@ -13,6 +13,11 @@ if (vault == nil) then
     return
 end
 
+if (monitor == nil) then
+    printError("No Monitor found")
+    return
+end
+
 print(("Updating monitor %s"):format(peripheral.getName(monitor)))
 
 while true do
