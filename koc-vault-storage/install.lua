@@ -4,10 +4,14 @@ local programs = {
 
 local completion = require "cc.completion"
 
-function downloadFile(file)
+function downloadFile(file, filename)
     if (fs.exists(file)) then fs.delete(file) end
 
-    shell.run(("wget https://raw.githubusercontent.com/Chase22/cc-scripts/main/koc-vault-storage/%s"):format(file))
+    if filename == nil then
+        filename = file
+    end
+
+    shell.run(("wget https://raw.githubusercontent.com/Chase22/cc-scripts/main/koc-vault-storage/%s %s"):format(file, filename))
 end
 
 function startup(program)
@@ -20,22 +24,8 @@ for key, value in pairs(programs) do
     downloadFile(value)
 end
 
+downloadFile("startup.lua", "startup")
+
 read()
 
-term.clear()
-term.setCursorPos(1,1)
-print("Should this computer be a dispatcher or monitor?")
-
-local choice = read(nil, nil, function(text)
-    return completion.choice(text, {"dispatcher", "monitor"})
-end)
-if choice == "dispatcher" then
-    startup("dispatch") 
-    os.reboot()
-elseif choice == "monitor" then
-    startup("monitor")
-    os.reboot()
-else
-    printError("Invalid selection")
-    return
-end
+os.reboot()

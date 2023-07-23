@@ -95,36 +95,39 @@ function requestUserInput(vaults)
     return key, amount
 end
 
-term.clear()
-term.setCursorPos(1, 1)
+function main()
+    term.clear()
+    term.setCursorPos(1, 1)
 
-Chest = peripheral.find("minecraft:chest")
-local vaults = { peripheral.find("create:item_vault") }
+    Chest = peripheral.find("minecraft:chest")
+    local vaults = { peripheral.find("create:item_vault") }
 
-if (Chest == nil) then
-    printError("No Output Chest found")
-    return
+    if (Chest == nil) then
+        printError("No Output Chest found")
+        return
+    end
+
+    if (next(vaults) == nil) then
+        printError("No Vault found")
+        return
+    end
+
+    while (true) do
+        term.clear()
+        term.setCursorPos(1, 1)
+
+        local key, amount
+
+        while (key == nil) do
+            key, amount = requestUserInput(vaults)
+        end
+
+        local inventory = common.getInventory(vaults)
+        dispense(inventory, key, amount)
+
+        print("Press any key to dispense next item")
+        os.pullEvent("key")
+    end
 end
 
-if (next(vaults) == nil) then
-    printError("No Vault found")
-    return
-end
-
-
-
-term.clear()
-term.setCursorPos(1, 1)
-
-local key, amount 
-
-while (key == nil) do
-    key, amount = requestUserInput(vaults)    
-end
-
-local inventory = common.getInventory(vaults)
-dispense(inventory, key, amount)
-
-print("Press any key to dispense next item")
-os.pullEvent("key")
-shell.run("dispatch")
+return main
