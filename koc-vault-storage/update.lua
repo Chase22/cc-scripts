@@ -1,5 +1,5 @@
 local programs = {
-    "vaultDispatcher.lua", "tableexp.lua", "inventoryInspect.lua", "update.lua"
+    "dispatch.lua", "tableexp.lua", "inventoryInspect.lua", "update.lua", "monitor.lua", "common.lua"
 }
 
 for key, value in pairs(programs) do
