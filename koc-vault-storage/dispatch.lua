@@ -42,7 +42,7 @@ function dispense(inventory, key, amount)
     end
 
     print()
-    print(("Dispensed %d %s"):format(amount, common.displayNames[key]))
+    print(("Dispensed %d %s"):format(amount, common.getDisplayNames()[key]))
 end
 
 function requestUserInput(vaults)
@@ -51,7 +51,7 @@ function requestUserInput(vaults)
     local keys = {}
 
     for _, value in pairs(table_exp.getKeys(inventory)) do
-        table.insert(keys, common.displayNames[value])
+        table.insert(keys, common.getDisplayNames()[value])
     end
 
     table.sort(keys)
@@ -70,7 +70,7 @@ function requestUserInput(vaults)
     term.clear()
     term.setCursorPos(1, 1)
 
-    local key = table_exp.getByValue(common.displayNames, choice)
+    local key = table_exp.getByValue(common.getDisplayNames(), choice)
     if (key == nil) then
         printError(("Could not find any item Named %s in Storage"):format(choice))
         return nil

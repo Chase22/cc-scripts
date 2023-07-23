@@ -1,4 +1,5 @@
 local common = require "common"
+local table_exp = require "tableexp"
 
 string.lpad = function(str, len, char)
     if char == nil then char = ' ' end
@@ -32,7 +33,7 @@ function main()
             for key, value in pairs(details) do
                 amount = amount + value.amount
             end
-            local displayName = common.displayNames[name]
+            local displayName = table_exp.getOrElse(common.getDisplayNames(), name, name)
             longestName = math.max(longestName, #displayName)
 
             table.insert(entries, { displayName, ("%s"):format(amount), ("%s"):format(#details) })

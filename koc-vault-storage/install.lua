@@ -1,5 +1,5 @@
 local programs = {
-    "dispatch.lua", "tableexp.lua", "monitor.lua", "common.lua"
+    "dispatch.lua", "tableexp.lua", "monitor.lua", "common.lua", "nameUpdate.lua"
 }
 
 local completion = require "cc.completion"

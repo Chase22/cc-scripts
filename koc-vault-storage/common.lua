@@ -2,35 +2,55 @@ local table_exp = require "tableexp"
 
 local common = {}
 
-common.displayNames = {}
+local displayNamesFile = "displayNames"
 
 function common.getInventory(vaults)
     local inventoryTable = {}
 
-    local vaultNames = {}
-
     for _, vault in pairs(vaults) do
         local name = peripheral.getName(vault)
-        vaultNames[name] = vault
 
-        for slot, item in pairs(vault.list()) do
-            if (details ~= nil) then 
-                common.displayNames[item.name] = details.displayName 
-            end
-    
+        for slot, item in pairs(vault.list()) do    
             local list = table_exp.getOrElse(inventoryTable, item.name, {})
             table.insert(list, { slot = slot, amount = item.count, vault = name })
     
             inventoryTable[item.name] = list
         end
     end
-
-    for key, entry in pairs(inventoryTable) do
-        local details = vaultNames[entry[1].vault].getItemDetail(entry[1].slot)
-        common.displayNames[key] = details.displayName
-    end
     
     return inventoryTable
+end
+
+function common.updateDisplayNames(vaults)
+
+    local vaultNames = {}
+    local displayNames = {}
+
+    for _, vault in pairs(vaults) do
+        local name = peripheral.getName(vault)
+        vaultNames[name] = vault
+    end
+
+    for key, entry in pairs(common.getInventory(vaults)) do
+        local details = vaultNames[entry[1].vault].getItemDetail(entry[1].slot)
+        if (details ~= nil) then displayNames[key] = details.displayName end
+    end
+
+    local names = fs.open(displayNamesFile, "w")
+    names.write(textutils.serialize(displayNames))
+    names.close()
+end
+
+function common.getDisplayNames()
+    local names = fs.open(displayNamesFile, "r")
+    if (names == nil) then
+        return {}
+    end
+
+    local displayNames = textutils.unserialize(names.readAll())
+    names.close()
+
+    return displayNames
 end
 
 function common.readWithTimeout(timeout, autocomplete)
