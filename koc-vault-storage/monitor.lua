@@ -1,14 +1,14 @@
 local common = require "common"
 
 local monitor = peripheral.find("monitor")
-local vault = peripheral.find("create:item_vault")
+local vault = { peripheral.find("create:item_vault") }
 
 string.lpad = function(str, len, char)
     if char == nil then char = ' ' end
     return str .. string.rep(char, len - #str)
 end
 
-if (vault == nil) then
+if (next(vault) == nil) then
     printError("No Vault found")
     return
 end

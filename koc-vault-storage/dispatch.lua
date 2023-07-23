@@ -12,9 +12,10 @@ function dispense(inventory, key, amount)
     end
 
     if (amountAvailable < amount) then
-        printError(("Not enough items to dispense %d. Would you like to dispense the available %d? Y/N"):format(amount, amountAvailable))
+        printError(("Not enough items to dispense %d. Would you like to dispense the available %d? Y/N"):format(amount,
+            amountAvailable))
         local choice = read(nil, nil, function(text)
-            return completion.choice(text, {"y", "n"})
+            return completion.choice(text, { "y", "n" })
         end)
         if string.lower(choice) == "y" then
             dispense(inventory, key, amountAvailable)
@@ -24,7 +25,7 @@ function dispense(inventory, key, amount)
         end
     end
 
-    table.sort(items, function (a,b)
+    table.sort(items, function(a, b)
         return a.amount < b.amount
     end)
 
@@ -33,10 +34,10 @@ function dispense(inventory, key, amount)
         local amountToDispense = 0
         if inventoryEntry.amount >= amountLeft then
             amountToDispense = amountLeft
-        else 
+        else
             amountToDispense = inventoryEntry.amount
         end
-        Vault.pushItems(peripheral.getName(Chest), inventoryEntry.slot, amountToDispense)
+        Chest.pullItems(inventoryEntry.vault, inventoryEntry.slot, amountToDispense)
         amountLeft = amountLeft - amountToDispense
     end
 
@@ -44,57 +45,84 @@ function dispense(inventory, key, amount)
     print(("Dispensed %d %s"):format(amount, common.displayNames[key]))
 end
 
+function requestUserInput(vaults)
+    term.clear()
+    term.setCursorPos(1, 1)
+
+    local inventory = common.getInventory(vaults)
+
+    local keys = {}
+
+    for _, value in pairs(table_exp.getKeys(inventory)) do
+        table.insert(keys, common.displayNames[value])
+    end
+
+    table.sort(keys)
+
+    print("What would you like to dispense?")
+    local choice
+
+    local choice = common.readWithTimeout(30, function(text)
+        return completion.choice(text, keys)
+    end)
+
+    if (choice == nil) then
+        return nil
+    end
+
+    term.clear()
+    term.setCursorPos(1, 1)
+
+    local key = table_exp.getByValue(common.displayNames, choice)
+    if (key == nil) then
+        printError(("Could not find any item Named %s in Storage"):format(choice))
+        return nil
+    end
+
+    print("How many items?")
+    local amount = nil
+
+    while amount == nil do
+        local input = common.readWithTimeout(30, nil)
+        if (input == nil) then return end
+
+        amount = tonumber(input)
+        if (amount == nil or amount < 0) then
+            print("please enter a valid number")
+        end
+    end
+
+    return key, amount
+end
+
 term.clear()
 term.setCursorPos(1, 1)
 
 Chest = peripheral.find("minecraft:chest")
-Vault = peripheral.find("create:item_vault")
+local vaults = { peripheral.find("create:item_vault") }
 
 if (Chest == nil) then
     printError("No Output Chest found")
     return
 end
 
-if (Vault == nil) then
+if (next(vaults) == nil) then
     printError("No Vault found")
     return
 end
 
-local inventory = common.getInventory(Vault)
 
-local keys = {}
-
-for key, value in pairs(table_exp.getKeys(inventory)) do
-    table.insert(keys, common.displayNames[value])
-end
-
-print("What would you like to dispense?")
-local choice = read(nil, nil, function(text)
-    return completion.choice(text, keys)
-end)
 
 term.clear()
 term.setCursorPos(1, 1)
 
-local key = table_exp.getByValue(common.displayNames, choice)
-if (key == nil) then
-    printError(("Could not find any item Named %s in Storage"):format(choice))
-    return
+local key, amount 
+
+while (key == nil) do
+    key, amount = requestUserInput(vaults)    
 end
 
-print("How many items?")
-local amount = nil
-
-while amount == nil do
-    amount = tonumber(read())
-    if (amount == nil or amount < 0) then
-        print("please enter a valid number")
-    end
-end
-
-term.clear()
-term.setCursorPos(1,1)
- 
+local inventory = common.getInventory(vaults)
 dispense(inventory, key, amount)
 
 print("Press any key to dispense next item")
