@@ -10,6 +10,8 @@ local programs = {
     { "startup.lua", "startup" }
 }
 
+local address = fs.open("address", "r").readAll()
+
 for key, value in pairs(programs) do
     local remoteName, localName
 
@@ -21,5 +23,5 @@ for key, value in pairs(programs) do
     end
 
     fs.delete(localName)
-    shell.run(("wget http://192.168.1.194:8080/%s %s"):format(remoteName, localName))
+    shell.run(("wget http://%s/%s %s"):format(address, remoteName, localName))
 end
