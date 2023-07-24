@@ -1,12 +1,12 @@
 local programs = {
-    "dispatch.lua",
-    "tableexp.lua",
-    "inventoryInspect.lua",
-    "update.lua",
-    "monitorVault.lua",
-    "common.lua",
-    "benchmark.lua",
-    "nameUpdate.lua",
+    {"lib/tableexp.lua", "tableexp.lua"},
+    {"lib/common.lua", "common.lua"},
+
+    {"src/dispatch.lua", "dispatch.lua"},
+    {"src/monitorVault.lua", "monitorVault.lua"},
+    {"src/nameUpdate.lua", "nameUpdate.lua"},
+
+    {"update.lua", "update.lua"},
     { "startup.lua", "startup" }
 }
 
